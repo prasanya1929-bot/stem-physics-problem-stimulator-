@@ -1,96 +1,176 @@
 .input-panel {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: #1E1E1E;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #2A2A2A;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.input-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.5), transparent);
 }
 
 .input-panel h2 {
-  color: #333;
-  margin-bottom: 15px;
-  font-size: 18px;
+  color: #F5F5F5;
+  margin-bottom: 18px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
 }
 
 .input-panel textarea {
   width: 100%;
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  padding: 14px 16px;
+  background: #0F0F0F;
+  border: 1px solid #2A2A2A;
+  border-radius: 10px;
   font-size: 14px;
   font-family: inherit;
+  color: #E5E5E5;
   resize: vertical;
-  transition: border-color 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .input-panel textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #4F46E5;
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 3px rgba(79, 70, 229, 0.15),
+    0 0 20px rgba(79, 70, 229, 0.2);
+}
+
+.input-panel textarea::placeholder {
+  color: #666;
 }
 
 .input-panel button[type="submit"] {
   width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 14px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #4F46E5 0%, #8B5CF6 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 16px rgba(79, 70, 229, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.input-panel button[type="submit"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
 }
 
 .input-panel button[type="submit"]:hover:not(:disabled) {
   transform: translateY(-2px);
+  box-shadow: 
+    0 6px 24px rgba(79, 70, 229, 0.4),
+    0 0 40px rgba(79, 70, 229, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.input-panel button[type="submit"]:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.input-panel button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .input-panel button[type="submit"]:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .error {
-  margin-top: 10px;
-  padding: 10px;
-  background: #fee;
-  color: #c33;
-  border-radius: 6px;
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #FCA5A5;
+  border-radius: 8px;
   font-size: 14px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
 }
 
 .examples {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #e0e0e0;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #2A2A2A;
 }
 
 .examples h3 {
   font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
+  color: #A0A0A0;
+  margin-bottom: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .example-btn {
   display: block;
   width: 100%;
-  padding: 10px;
-  margin-bottom: 8px;
-  background: #f5f5f5;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: #0F0F0F;
+  border: 1px solid #2A2A2A;
+  border-radius: 8px;
   text-align: left;
   font-size: 13px;
+  color: #B0B0B0;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.example-btn::before {
+  content: '→';
+  position: absolute;
+  right: 14px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  color: #8B5CF6;
 }
 
 .example-btn:hover:not(:disabled) {
-  background: #e8e8e8;
-  border-color: #667eea;
+  background: rgba(79, 70, 229, 0.1);
+  border-color: #4F46E5;
+  color: #E5E5E5;
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.2);
+}
+
+.example-btn:hover:not(:disabled)::before {
+  opacity: 1;
+  right: 12px;
 }
 
 .example-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }

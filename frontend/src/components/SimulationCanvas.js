@@ -37,26 +37,44 @@ function SimulationCanvas({ physicsData }) {
       const canvasX = 50 + x * scale;
       const canvasY = groundY - y * scale;
       
-      // Clear canvas
-      ctx.fillStyle = '#f8f9fa';
+      // Clear canvas with dark background
+      ctx.fillStyle = '#0F0F0F';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Draw ground
-      ctx.strokeStyle = '#333';
-      ctx.lineWidth = 2;
+      // Draw ground with gradient
+      const groundGradient = ctx.createLinearGradient(0, groundY - 2, 0, groundY + 2);
+      groundGradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)');
+      groundGradient.addColorStop(1, 'rgba(139, 92, 246, 0.3)');
+      ctx.strokeStyle = groundGradient;
+      ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(0, groundY);
       ctx.lineTo(canvas.width, groundY);
       ctx.stroke();
       
-      // Draw trajectory
+      // Draw ground shadow
+      ctx.fillStyle = 'rgba(79, 70, 229, 0.05)';
+      ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+      
+      // Draw trajectory with gradient
       if (y >= 0) {
         stateRef.current.trajectory.push({ x: canvasX, y: canvasY });
       }
       
-      ctx.strokeStyle = '#667eea';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([5, 5]);
+      const trajectoryGradient = ctx.createLinearGradient(
+        stateRef.current.trajectory[0]?.x || canvasX, 
+        stateRef.current.trajectory[0]?.y || canvasY,
+        canvasX, 
+        canvasY
+      );
+      trajectoryGradient.addColorStop(0, 'rgba(79, 70, 229, 0.3)');
+      trajectoryGradient.addColorStop(1, 'rgba(139, 92, 246, 0.8)');
+      
+      ctx.strokeStyle = trajectoryGradient;
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8, 4]);
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = 'rgba(79, 70, 229, 0.5)';
       ctx.beginPath();
       stateRef.current.trajectory.forEach((point, i) => {
         if (i === 0) ctx.moveTo(point.x, point.y);
@@ -64,46 +82,83 @@ function SimulationCanvas({ physicsData }) {
       });
       ctx.stroke();
       ctx.setLineDash([]);
+      ctx.shadowBlur = 0;
       
-      // Draw object
+      // Draw object with glow effect
       if (y >= 0 && canvasX < canvas.width) {
-        ctx.fillStyle = '#764ba2';
+        // Outer glow
+        const glowGradient = ctx.createRadialGradient(canvasX, canvasY, 0, canvasX, canvasY, 30);
+        glowGradient.addColorStop(0, 'rgba(139, 92, 246, 0.4)');
+        glowGradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
+        ctx.fillStyle = glowGradient;
         ctx.beginPath();
-        ctx.arc(canvasX, canvasY, 12, 0, Math.PI * 2);
+        ctx.arc(canvasX, canvasY, 30, 0, Math.PI * 2);
         ctx.fill();
         
-        // Draw velocity vector
+        // Main object with gradient
+        const objectGradient = ctx.createRadialGradient(canvasX - 4, canvasY - 4, 0, canvasX, canvasY, 14);
+        objectGradient.addColorStop(0, '#8B5CF6');
+        objectGradient.addColorStop(1, '#4F46E5');
+        ctx.fillStyle = objectGradient;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = 'rgba(139, 92, 246, 0.8)';
+        ctx.beginPath();
+        ctx.arc(canvasX, canvasY, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Draw velocity vector with gradient
         const vxCurrent = vx;
         const vyCurrent = vy - gravity * t;
         const vectorScale = 3;
         
-        ctx.strokeStyle = '#ff6b6b';
-        ctx.lineWidth = 3;
+        const vectorGradient = ctx.createLinearGradient(
+          canvasX, canvasY,
+          canvasX + vxCurrent * vectorScale, canvasY - vyCurrent * vectorScale
+        );
+        vectorGradient.addColorStop(0, '#EF4444');
+        vectorGradient.addColorStop(1, '#F97316');
+        
+        ctx.strokeStyle = vectorGradient;
+        ctx.lineWidth = 4;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(239, 68, 68, 0.6)';
         ctx.beginPath();
         ctx.moveTo(canvasX, canvasY);
         ctx.lineTo(canvasX + vxCurrent * vectorScale, canvasY - vyCurrent * vectorScale);
         ctx.stroke();
+        ctx.shadowBlur = 0;
         
-        // Arrow head
+        // Arrow head with glow
         const arrowX = canvasX + vxCurrent * vectorScale;
         const arrowY = canvasY - vyCurrent * vectorScale;
         const arrowAngle = Math.atan2(-vyCurrent, vxCurrent);
         
-        ctx.fillStyle = '#ff6b6b';
+        ctx.fillStyle = '#EF4444';
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = 'rgba(239, 68, 68, 0.8)';
         ctx.beginPath();
         ctx.moveTo(arrowX, arrowY);
-        ctx.lineTo(arrowX - 10 * Math.cos(arrowAngle - Math.PI / 6), arrowY + 10 * Math.sin(arrowAngle - Math.PI / 6));
-        ctx.lineTo(arrowX - 10 * Math.cos(arrowAngle + Math.PI / 6), arrowY + 10 * Math.sin(arrowAngle + Math.PI / 6));
+        ctx.lineTo(arrowX - 12 * Math.cos(arrowAngle - Math.PI / 6), arrowY + 12 * Math.sin(arrowAngle - Math.PI / 6));
+        ctx.lineTo(arrowX - 12 * Math.cos(arrowAngle + Math.PI / 6), arrowY + 12 * Math.sin(arrowAngle + Math.PI / 6));
         ctx.closePath();
         ctx.fill();
+        ctx.shadowBlur = 0;
         
-        // Draw labels
-        ctx.fillStyle = '#333';
-        ctx.font = '14px sans-serif';
-        ctx.fillText(`Height: ${y.toFixed(1)} m`, 10, 30);
-        ctx.fillText(`Distance: ${x.toFixed(1)} m`, 10, 50);
-        ctx.fillText(`Time: ${t.toFixed(2)} s`, 10, 70);
-        ctx.fillText(`Velocity: ${Math.sqrt(vxCurrent**2 + vyCurrent**2).toFixed(1)} m/s`, 10, 90);
+        // Draw labels with modern styling
+        ctx.fillStyle = 'rgba(30, 30, 30, 0.8)';
+        ctx.fillRect(10, 10, 200, 110);
+        
+        ctx.strokeStyle = 'rgba(79, 70, 229, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(10, 10, 200, 110);
+        
+        ctx.fillStyle = '#E5E5E5';
+        ctx.font = 'bold 15px Inter, sans-serif';
+        ctx.fillText(`Height: ${y.toFixed(1)} m`, 20, 35);
+        ctx.fillText(`Distance: ${x.toFixed(1)} m`, 20, 58);
+        ctx.fillText(`Time: ${t.toFixed(2)} s`, 20, 81);
+        ctx.fillText(`Velocity: ${Math.sqrt(vxCurrent**2 + vyCurrent**2).toFixed(1)} m/s`, 20, 104);
         
         stateRef.current.time += 0.02;
       } else {
