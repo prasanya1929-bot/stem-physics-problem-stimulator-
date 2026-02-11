@@ -15,7 +15,7 @@ Convert physics word problems into interactive visual simulations using AI.
 
 - **Frontend**: React, Canvas API
 - **Backend**: Node.js, Express
-- **AI**: OpenRouter API (Mixtral-8x7B)
+- **AI**: AI: OpenRouter API ("openrouter/free")
 - **Physics**: Custom simulation engine
 
 ## Setup Instructions
